@@ -17,11 +17,25 @@ fn init_ppm_format(width: i32, height: i32) {
 }
 
 fn compute_color(ray: &Ray) -> Color {
+    /*
     let sphere: Sphere = Sphere {
         center: new_vec3d(0., 0., -1.),
         radius: 0.5,
     };
-    match sphere.hit(&ray, 0.0, 1e50) {
+    */
+
+    let world = &[
+        Sphere {
+            center: new_vec3d(0., 0., -1.),
+            radius: 0.5,
+        },
+        Sphere {
+            center: new_vec3d(0., -100.5, -1.),
+            radius: 100.,
+        },
+    ];
+
+    match world.hit(&ray, 0.0, 1e50) {
         HitRecord::Nothing => {
             let unit_direction = normalize(&ray.direction);
             let t = 0.5 * (unit_direction.y() + 1.);
