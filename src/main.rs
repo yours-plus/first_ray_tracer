@@ -1,7 +1,9 @@
+pub mod hitable;
 pub mod ray;
 pub mod sphere;
 pub mod vec3d;
 
+use hitable::*;
 use ray::*;
 use sphere::*;
 use vec3d::*;
@@ -19,17 +21,21 @@ fn compute_color(ray: &Ray) -> Color {
         center: new_vec3d(0., 0., -1.),
         radius: 0.5,
     };
-    let t = ray.hit_sphere(&sphere);
+    match sphere.hit(&ray, 0.0, 1e50) {
+        HitRecord::Nothing => {
+            let unit_direction = normalize(&ray.direction);
+            let t = 0.5 * (unit_direction.y() + 1.);
 
-    if t > 0.0 {
-        let n = normalize(&(ray.at(t) - sphere.center));
-        return 0.5 * new_vec3d(n.x() + 1., n.y() + 1., n.z() + 1.);
+            (1. - t) * new_vec3d(1., 1., 1.) + t * new_vec3d(0.5, 0.7, 1.)
+        }
+        HitRecord::Hit {
+            t: _,
+            point: _,
+            normal: n,
+        } => {
+            return 0.5 * new_vec3d(n.x() + 1., n.y() + 1., n.z() + 1.);
+        }
     }
-
-    let unit_direction = normalize(&ray.direction);
-    let t = 0.5 * (unit_direction.y() + 1.);
-
-    (1. - t) * new_vec3d(1., 1., 1.) + t * new_vec3d(0.5, 0.7, 1.)
 }
 
 // Output sample image in PPM format.
