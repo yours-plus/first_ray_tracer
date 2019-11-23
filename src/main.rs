@@ -1,8 +1,10 @@
+pub mod camera;
 pub mod hitable;
 pub mod ray;
 pub mod sphere;
 pub mod vec3d;
 
+use camera::*;
 use hitable::*;
 use ray::*;
 use sphere::*;
@@ -52,19 +54,13 @@ fn main() {
 
     init_ppm_format(WIDTH, HEIGHT);
 
-    let origin = new_vec3d(0., 0., 0.);
-    let lower_left_corner = new_vec3d(-2., -1., -1.);
-    let horizontal = new_vec3d(4., 0., 0.);
-    let vertical = new_vec3d(0., 2., 0.);
+    let camera = Camera::initial_camera();
 
     for y in (0..HEIGHT).rev() {
         for x in 0..WIDTH {
             let u = x as f64 / WIDTH as f64;
             let v = y as f64 / HEIGHT as f64;
-            let ray = Ray {
-                origin: origin,
-                direction: lower_left_corner + u * horizontal + v * vertical,
-            };
+            let ray = camera.get_ray(u, v);
             let color = compute_color(&ray);
 
             let ir = (255.99 * color.elements[0]) as i32;
