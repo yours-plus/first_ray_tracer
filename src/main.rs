@@ -17,13 +17,6 @@ fn init_ppm_format(width: i32, height: i32) {
 }
 
 fn compute_color(ray: &Ray) -> Color {
-    /*
-    let sphere: Sphere = Sphere {
-        center: new_vec3d(0., 0., -1.),
-        radius: 0.5,
-    };
-    */
-
     let world = &[
         Sphere {
             center: new_vec3d(0., 0., -1.),
