@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3D {
@@ -56,6 +56,14 @@ impl Mul<Vec3D> for f64 {
             elements[i] = other.elements[i] * self;
         }
         Vec3D { elements }
+    }
+}
+
+impl Div<f64> for Vec3D {
+    type Output = Vec3D;
+
+    fn div(self, other: f64) -> Vec3D {
+        (1. / other) * self
     }
 }
 

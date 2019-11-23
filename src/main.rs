@@ -74,7 +74,7 @@ fn main() {
                 color = color + compute_color(&ray);
             }
 
-            color = (1. / NUM_SAMPLES as f64) * color;
+            color = color / (NUM_SAMPLES as f64);
 
             let ir = (255.99 * color.elements[0]) as i32;
             let ig = (255.99 * color.elements[1]) as i32;
