@@ -10,6 +10,8 @@ use ray::*;
 use sphere::*;
 use vec3d::*;
 
+use rand::Rng;
+
 type Color = Vec3D;
 
 fn init_ppm_format(width: i32, height: i32) {
@@ -56,12 +58,23 @@ fn main() {
 
     let camera = Camera::initial_camera();
 
+    const NUM_SAMPLES: i32 = 100;
+
+    let mut rng = rand::thread_rng();
+
     for y in (0..HEIGHT).rev() {
         for x in 0..WIDTH {
-            let u = x as f64 / WIDTH as f64;
-            let v = y as f64 / HEIGHT as f64;
-            let ray = camera.get_ray(u, v);
-            let color = compute_color(&ray);
+            let mut color = new_vec3d(0., 0., 0.);
+
+            for _ in 0..NUM_SAMPLES {
+                let u = (x as f64 + rng.gen::<f64>()) / WIDTH as f64;
+                let v = (y as f64 + rng.gen::<f64>()) / HEIGHT as f64;
+                let ray = camera.get_ray(u, v);
+
+                color = color + compute_color(&ray);
+            }
+
+            color = (1. / NUM_SAMPLES as f64) * color;
 
             let ir = (255.99 * color.elements[0]) as i32;
             let ig = (255.99 * color.elements[1]) as i32;
