@@ -51,6 +51,11 @@ fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
     }
 }
 
+// 1/2 乗する
+fn linear_to_gamma(v: &Vec3D) -> Vec3D {
+    new_vec3d(v.x().sqrt(), v.y().sqrt(), v.z().sqrt())
+}
+
 // Output sample image in PPM format.
 fn main() {
     const WIDTH: i32 = 200;
@@ -74,6 +79,8 @@ fn main() {
     const NUM_SAMPLES: i32 = 100;
 
     for y in (0..HEIGHT).rev() {
+        eprintln!("y: {}", y);
+
         for x in 0..WIDTH {
             let mut color = new_vec3d(0., 0., 0.);
 
@@ -86,6 +93,7 @@ fn main() {
             }
 
             color = color / (NUM_SAMPLES as f64);
+            color = linear_to_gamma(&color);
 
             let ir = (255.99 * color.elements[0]) as i32;
             let ig = (255.99 * color.elements[1]) as i32;
