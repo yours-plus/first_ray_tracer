@@ -1,6 +1,7 @@
 use super::ray::*;
 use super::vec3d::*;
 
+#[derive(Debug)]
 pub enum HitRecord {
     Nothing,
     Hit { t: f64, point: Vec3D, normal: Vec3D },

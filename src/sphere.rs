@@ -26,10 +26,34 @@ impl Hitable for Sphere {
                 return HitRecord::Hit {
                     t: t,
                     point: p,
-                    normal: (1.0 / self.radius) * (p - self.center),
+                    normal: (p - self.center) / self.radius,
                 };
             }
         }
         HitRecord::Nothing
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn nearly_equals(a: f64, b: f64) -> bool {
+        const EPS: f64 = 1e-7;
+        (a - b).abs() < EPS
+    }
+
+    #[test]
+    fn test1() {
+        let sphere = Sphere {
+            center: new_vec3d(0., 0., 10.),
+            radius: 1.0,
+        };
+        let ray = Ray {
+            origin: new_vec3d(0., 0., 0.),
+            direction: new_vec3d(0., 0., 1.),
+        };
+        let record = sphere.hit(&ray, 0., 100.0);
+        println!("{:?}", record);
     }
 }
