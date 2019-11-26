@@ -20,18 +20,7 @@ fn init_ppm_format(width: i32, height: i32) {
     println!("255");
 }
 
-fn compute_color(ray: &Ray) -> Color {
-    let world = &[
-        Sphere {
-            center: new_vec3d(0., 0., -1.),
-            radius: 0.5,
-        },
-        Sphere {
-            center: new_vec3d(0., -100.5, -1.),
-            radius: 100.,
-        },
-    ];
-
+fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
     match world.hit(&ray, 0.0, 1e50) {
         HitRecord::Nothing => {
             let unit_direction = normalize(&ray.direction);
@@ -58,6 +47,17 @@ fn main() {
 
     let camera = Camera::initial_camera();
 
+    let world = [
+        Sphere {
+            center: new_vec3d(0., 0., -1.),
+            radius: 0.5,
+        },
+        Sphere {
+            center: new_vec3d(0., -100.5, -1.),
+            radius: 100.,
+        },
+    ];
+
     const NUM_SAMPLES: i32 = 100;
 
     let mut rng = rand::thread_rng();
@@ -71,7 +71,7 @@ fn main() {
                 let v = (y as f64 + rng.gen::<f64>()) / HEIGHT as f64;
                 let ray = camera.get_ray(u, v);
 
-                color = color + compute_color(&ray);
+                color = color + compute_color(&ray, &world[..]);
             }
 
             color = color / (NUM_SAMPLES as f64);
