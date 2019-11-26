@@ -18,8 +18,18 @@ fn init_ppm_format(width: i32, height: i32) {
     println!("255");
 }
 
+fn random_in_unit_sphere() -> Vec3D {
+    loop {
+        let p =
+            2.0 * new_vec3d(rand::random(), rand::random(), rand::random()) - new_vec3d(1., 1., 1.);
+        if p.norm() <= 1.0 {
+            return p;
+        }
+    }
+}
+
 fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
-    match world.hit(&ray, 0.0, 1e50) {
+    match world.hit(&ray, 0.001, 1e50) {
         HitRecord::Nothing => {
             let unit_direction = normalize(&ray.direction);
             let t = 0.5 * (unit_direction.y() + 1.);
@@ -28,10 +38,15 @@ fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
         }
         HitRecord::Hit {
             t: _,
-            point: _,
+            point: p,
             normal: n,
         } => {
-            return 0.5 * new_vec3d(n.x() + 1., n.y() + 1., n.z() + 1.);
+            let target = p + n + random_in_unit_sphere();
+            let new_ray = Ray {
+                origin: p,
+                direction: target - p,
+            };
+            return 0.5 * compute_color(&new_ray, world);
         }
     }
 }
