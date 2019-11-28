@@ -1,5 +1,6 @@
 use super::vec3d::*;
 
+#[derive(Debug)]
 pub struct Ray {
     pub origin: Vec3D,
     pub direction: Vec3D,

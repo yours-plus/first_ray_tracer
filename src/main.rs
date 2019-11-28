@@ -1,11 +1,14 @@
 pub mod camera;
 pub mod hitable;
+pub mod material;
 pub mod ray;
 pub mod sphere;
+pub mod util;
 pub mod vec3d;
 
 use camera::*;
 use hitable::*;
+use material::*;
 use ray::*;
 use sphere::*;
 use vec3d::*;
@@ -16,16 +19,6 @@ fn init_ppm_format(width: i32, height: i32) {
     println!("P3");
     println!("{} {}", width, height);
     println!("255");
-}
-
-fn random_in_unit_sphere() -> Vec3D {
-    loop {
-        let p =
-            2.0 * new_vec3d(rand::random(), rand::random(), rand::random()) - new_vec3d(1., 1., 1.);
-        if p.norm() <= 1.0 {
-            return p;
-        }
-    }
 }
 
 fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
@@ -40,13 +33,16 @@ fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
             t: _,
             point: p,
             normal: n,
+            material: m,
         } => {
-            let target = p + n + random_in_unit_sphere();
-            let new_ray = Ray {
-                origin: p,
-                direction: target - p,
-            };
-            return 0.5 * compute_color(&new_ray, world);
+            // scatterdで分岐
+            match m.scatter(&ray, p, n) {
+                ScatterRecord::Absorption => new_vec3d(0., 0., 0.),
+                ScatterRecord::Scatter {
+                    scattered: s,
+                    attenuation: a,
+                } => a.elements[0] * compute_color(&s, world),
+            }
         }
     }
 }
@@ -69,10 +65,16 @@ fn main() {
         Sphere {
             center: new_vec3d(0., 0., -1.),
             radius: 0.5,
+            material: &Lambertian {
+                albedo: new_vec3d(0.5, 0.5, 0.5),
+            },
         },
         Sphere {
             center: new_vec3d(0., -100.5, -1.),
             radius: 100.,
+            material: &Lambertian {
+                albedo: new_vec3d(0.5, 0.5, 0.5),
+            },
         },
     ];
 

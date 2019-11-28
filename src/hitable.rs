@@ -1,10 +1,15 @@
+use super::material::*;
 use super::ray::*;
 use super::vec3d::*;
 
-#[derive(Debug)]
-pub enum HitRecord {
+pub enum HitRecord<'a> {
     Nothing,
-    Hit { t: f64, point: Vec3D, normal: Vec3D },
+    Hit {
+        t: f64,
+        point: Vec3D,
+        normal: Vec3D,
+        material: &'a dyn Material,
+    },
 }
 
 pub trait Hitable {
