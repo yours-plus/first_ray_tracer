@@ -21,7 +21,7 @@ fn init_ppm_format(width: i32, height: i32) {
     println!("255");
 }
 
-fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
+fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T, depth: i32) -> Color {
     match world.hit(&ray, 0.001, 1e50) {
         HitRecord::Nothing => {
             let unit_direction = normalize(&ray.direction);
@@ -35,13 +35,16 @@ fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
             normal: n,
             material: m,
         } => {
+            if depth >= 50 {
+                return new_vec3d(0., 0., 0.);
+            }
             // scatterdで分岐
             match m.scatter(&ray, p, n) {
                 ScatterRecord::Absorption => new_vec3d(0., 0., 0.),
                 ScatterRecord::Scatter {
                     scattered: s,
                     attenuation: a,
-                } => a * compute_color(&s, world),
+                } => a * compute_color(&s, world, depth + 1),
             }
         }
     }
@@ -66,14 +69,28 @@ fn main() {
             center: new_vec3d(0., 0., -1.),
             radius: 0.5,
             material: &Lambertian {
-                albedo: new_vec3d(0.5, 0.5, 0.5),
+                albedo: new_vec3d(0.8, 0.3, 0.3),
             },
         },
         Sphere {
             center: new_vec3d(0., -100.5, -1.),
             radius: 100.,
             material: &Lambertian {
-                albedo: new_vec3d(0.5, 0.5, 0.5),
+                albedo: new_vec3d(0.8, 0.8, 0.0),
+            },
+        },
+        Sphere {
+            center: new_vec3d(1., 0., -1.),
+            radius: 0.5,
+            material: &Metal {
+                albedo: new_vec3d(0.8, 0.6, 0.2),
+            },
+        },
+        Sphere {
+            center: new_vec3d(-1., 0., -1.),
+            radius: 0.5,
+            material: &Metal {
+                albedo: new_vec3d(0.8, 0.8, 0.8),
             },
         },
     ];
@@ -91,7 +108,7 @@ fn main() {
                 let v = (y as f64 + rand::random::<f64>()) / HEIGHT as f64;
                 let ray = camera.get_ray(u, v);
 
-                color = color + compute_color(&ray, &world[..]);
+                color = color + compute_color(&ray, &world[..], 0);
             }
 
             color = color / (NUM_SAMPLES as f64);
