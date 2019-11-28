@@ -84,6 +84,7 @@ fn main() {
             radius: 0.5,
             material: &Metal {
                 albedo: new_vec3d(0.8, 0.6, 0.2),
+                fuzzy: 1.0,
             },
         },
         Sphere {
@@ -91,6 +92,7 @@ fn main() {
             radius: 0.5,
             material: &Metal {
                 albedo: new_vec3d(0.8, 0.8, 0.8),
+                fuzzy: 0.3,
             },
         },
     ];

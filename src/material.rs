@@ -38,6 +38,7 @@ fn reflect(v: Vec3D, n: Vec3D) -> Vec3D {
 
 pub struct Metal {
     pub albedo: Vec3D, // 入射光に対する反射光の比
+    pub fuzzy: f64,
 }
 
 impl Material for Metal {
@@ -46,7 +47,7 @@ impl Material for Metal {
 
         let scattered = Ray {
             origin: point,
-            direction: reflected,
+            direction: reflected + self.fuzzy * random_in_unit_sphere(),
         };
         let attenuation = self.albedo;
 
