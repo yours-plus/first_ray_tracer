@@ -41,7 +41,7 @@ fn compute_color<T: Hitable + ?Sized>(ray: &Ray, world: &T) -> Color {
                 ScatterRecord::Scatter {
                     scattered: s,
                     attenuation: a,
-                } => a.elements[0] * compute_color(&s, world),
+                } => a * compute_color(&s, world),
             }
         }
     }

@@ -59,6 +59,18 @@ impl Mul<Vec3D> for f64 {
     }
 }
 
+impl Mul for Vec3D {
+    type Output = Vec3D;
+
+    fn mul(self, other: Vec3D) -> Vec3D {
+        let mut elements = [0.0; 3];
+        for i in 0..3 {
+            elements[i] = self.elements[i] * other.elements[i];
+        }
+        Vec3D { elements }
+    }
+}
+
 impl Div<f64> for Vec3D {
     type Output = Vec3D;
 
