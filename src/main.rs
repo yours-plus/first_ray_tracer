@@ -69,7 +69,7 @@ fn main() {
             center: new_vec3d(0., 0., -1.),
             radius: 0.5,
             material: &Lambertian {
-                albedo: new_vec3d(0.8, 0.3, 0.3),
+                albedo: new_vec3d(0.1, 0.2, 0.5),
             },
         },
         Sphere {
@@ -84,15 +84,21 @@ fn main() {
             radius: 0.5,
             material: &Metal {
                 albedo: new_vec3d(0.8, 0.6, 0.2),
-                fuzzy: 1.0,
+                fuzzy: 0.0,
             },
         },
         Sphere {
             center: new_vec3d(-1., 0., -1.),
             radius: 0.5,
-            material: &Metal {
-                albedo: new_vec3d(0.8, 0.8, 0.8),
-                fuzzy: 0.3,
+            material: &Dielectric {
+                refractive_index: 1.5,
+            },
+        },
+        Sphere {
+            center: new_vec3d(-1., 0., -1.),
+            radius: -0.45,
+            material: &Dielectric {
+                refractive_index: 1.5,
             },
         },
     ];
