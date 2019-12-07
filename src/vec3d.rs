@@ -97,6 +97,14 @@ pub fn dot(v1: &Vec3D, v2: &Vec3D) -> f64 {
     res
 }
 
+pub fn cross(v1: &Vec3D, v2: &Vec3D) -> Vec3D {
+    new_vec3d(
+        v1.y() * v2.z() - v1.z() * v2.y(),
+        v1.z() * v2.x() - v1.x() * v2.z(),
+        v1.x() * v2.y() - v1.y() * v2.x(),
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
